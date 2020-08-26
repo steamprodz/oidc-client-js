@@ -16,6 +16,7 @@ import { TokenRevocationClient } from './src/TokenRevocationClient.js';
 import { SessionMonitor } from './src/SessionMonitor.js';
 import { Global } from './src/Global.js';
 import { User } from './src/User.js';
+import { JsonService } from './src/JsonService.js';
 
 import { Version } from './version.js';
 
@@ -35,5 +36,6 @@ export default {
     TokenRevocationClient,
     SessionMonitor,
     Global,
-    User
+    User,
+    JsonService
 };

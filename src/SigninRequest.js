@@ -9,6 +9,8 @@ export class SigninRequest {
     constructor({
         // mandatory
         url, client_id, redirect_uri, response_type, scope, authority,
+        // new
+        grant_type,
         // optional
         data, prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values, resource, response_mode,
         request, request_uri, extraQueryParams, request_type, client_secret, extraTokenParams, skipUserInfo
@@ -53,6 +55,10 @@ export class SigninRequest {
 
         url = UrlUtility.addQueryParam(url, "client_id", client_id);
         url = UrlUtility.addQueryParam(url, "redirect_uri", redirect_uri);
+
+        // Custom
+        url = UrlUtility.addQueryParam(url, "grant_type", grant_type);
+
         url = UrlUtility.addQueryParam(url, "response_type", response_type);
         url = UrlUtility.addQueryParam(url, "scope", scope);
 

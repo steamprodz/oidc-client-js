@@ -76,4 +76,26 @@ export class TokenClient {
             });
         });
     }
+
+    exchangeClientCredentialsToken(args = {}) {
+        args = Object.assign({}, args);
+
+        args.grant_type = args.grant_type || "client_credentials";
+        args.client_id = args.client_id || this._settings.client_id;
+        args.client_secret = args.client_secret || this._settings.client_secret;
+
+        if (!args.client_id) {
+            Log.error("TokenClient.exchangeRefreshToken: No client_id passed");
+            return Promise.reject(new Error("A client_id is required"));
+        }
+
+        return this._metadataService.getTokenEndpoint(false).then(url => {
+            Log.debug("TokenClient.exchangeCredentialsToken: Received token endpoint");
+
+            return this._jsonService.postForm(url, args).then(response => {
+                Log.debug("TokenClient.exchangeCredentialsToken: response received");
+                return response;
+            });
+        });
+    }
 }

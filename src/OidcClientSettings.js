@@ -13,6 +13,9 @@ const DefaultScope = "openid";
 const DefaultStaleStateAge = 60 * 15; // seconds
 const DefaultClockSkewInSeconds = 60 * 5;
 
+// New
+const DefaultGrantType = "implicit";
+
 export class OidcClientSettings {
     constructor({
         // metadata related
@@ -20,6 +23,8 @@ export class OidcClientSettings {
         // client related
         client_id, client_secret, response_type = DefaultResponseType, scope = DefaultScope,
         redirect_uri, post_logout_redirect_uri,
+        // new
+        grant_type = DefaultGrantType,
         // optional protocol
         prompt, display, max_age, ui_locales, acr_values, resource, response_mode,
         // behavior flags
@@ -46,6 +51,9 @@ export class OidcClientSettings {
         this._scope = scope;
         this._redirect_uri = redirect_uri;
         this._post_logout_redirect_uri = post_logout_redirect_uri;
+
+        // New
+        this._grant_type = grant_type;
 
         this._prompt = prompt;
         this._display = display;
@@ -99,6 +107,10 @@ export class OidcClientSettings {
         return this._post_logout_redirect_uri;
     }
 
+    // New
+    get grant_type() {
+        return this._grant_type;
+    }
 
     // optional protocol params
     get prompt() {

@@ -385,6 +385,9 @@ export class UserManager extends OidcClient {
                 navigatorParams.url = signinRequest.url;
                 navigatorParams.id = signinRequest.state.id;
 
+                if (args['grant_type'] === 'client_credentials')
+                    return navigatorParams;
+
                 return handle.navigate(navigatorParams);
             }).catch(err => {
                 if (handle.close) {

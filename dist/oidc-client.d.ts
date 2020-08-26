@@ -561,3 +561,15 @@ export interface CheckSessionIFrameCtor {
 export class SessionMonitor {
   constructor(userManager: UserManager, CheckSessionIFrameCtor: CheckSessionIFrameCtor);
 }
+
+export class JsonService {
+    constructor(
+    additionalContentTypes = null, 
+    XMLHttpRequestCtor = XMLHttpRequest, 
+    jwtHandler = null
+  )
+  
+  getJson(url, token) : Promise<string>;
+
+  postForm(url, payload) : Promise<string>;
+  }

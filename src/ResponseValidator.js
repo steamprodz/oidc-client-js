@@ -110,6 +110,7 @@ export class ResponseValidator {
             return Promise.reject(new ErrorResponse(response));
         }
 
+        if (this._settings.grant_type !== 'client_credentials')
         if (state.nonce && !response.id_token) {
             Log.error("ResponseValidator._processSigninParams: Expecting id_token in response");
             return Promise.reject(new Error("No id_token in response"));
@@ -120,6 +121,10 @@ export class ResponseValidator {
             return Promise.reject(new Error("Unexpected id_token in response"));
         }
 
+        if (this._settings.grant_type === 'client_credentials') {
+            response.grant_type = this._settings.grant_type;
+        }
+        else
         if (state.code_verifier && !response.code) {
             Log.error("ResponseValidator._processSigninParams: Expecting code in response");
             return Promise.reject(new Error("No code in response"));
@@ -230,6 +235,11 @@ export class ResponseValidator {
             return this._processCode(state, response);
         }
 
+        if (response.grant_type === 'client_credentials') {
+            Log.debug("ResponseValidator._validateTokens: Validating client credentials");
+            return this._processClientCredentials(state, response);
+        }
+
         if (response.id_token) {
             if (response.access_token) {
                 Log.debug("ResponseValidator._validateTokens: Validating id_token and access_token");
@@ -269,6 +279,34 @@ export class ResponseValidator {
             }
             else {
                 Log.debug("ResponseValidator._processCode: token response successful, returning response");
+            }
+            
+            return response;
+        });
+    }
+
+    _processClientCredentials(state, response) {
+        var request = {
+            client_id: state.client_id,
+            client_secret: state.client_secret
+        };
+
+        if (state.extraTokenParams && typeof(state.extraTokenParams) === 'object') {
+            Object.assign(request, state.extraTokenParams);
+        }
+        
+        return this._tokenClient.exchangeClientCredentialsToken(request).then(tokenResponse => {
+            
+            for(var key in tokenResponse) {
+                response[key] = tokenResponse[key];
+            }
+
+            if (response.id_token) {
+                Log.debug("ResponseValidator._processClientCredentials: token response successful, processing id_token");
+                return this._validateIdTokenAttributes(state, response);
+            }
+            else {
+                Log.debug("ResponseValidator._processClientCredentials: token response successful, returning response");
             }
             
             return response;
