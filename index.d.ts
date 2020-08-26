@@ -224,6 +224,12 @@ export class UserManager extends OidcClient {
   /** Disables silent renew */
   stopSilentRenew(): void;
 
+  /** Trigger a client credentials auth request (via silent login: an iframe or refreshtoken if available) to the authorization endpoint */
+  signinClientCredentials(args?: any): Promise<User>;
+
+  /** Calls REST API via specified path */
+  apiGet(apiPath: string, args?: any): Promise<string>;
+
   events: UserManagerEvents;
 }
 
@@ -586,3 +592,15 @@ export interface CheckSessionIFrameCtor {
 export class SessionMonitor {
   constructor(userManager: UserManager, CheckSessionIFrameCtor: CheckSessionIFrameCtor);
 }
+
+export class JsonService {
+    constructor(
+    additionalContentTypes = null, 
+    XMLHttpRequestCtor = XMLHttpRequest, 
+    jwtHandler = null
+  )
+  
+  getJson(url, token) : Promise<string>;
+
+  postForm(url, payload) : Promise<string>;
+  }

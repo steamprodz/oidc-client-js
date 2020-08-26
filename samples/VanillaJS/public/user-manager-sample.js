@@ -33,6 +33,8 @@ var settings = {
     post_logout_redirect_uri: 'http://localhost:15000/user-manager-sample.html',
     response_type: 'id_token token',
     scope: 'openid email roles',
+
+    grant_type: 'client_credentials',
     
     popup_redirect_uri:'http://localhost:15000/user-manager-sample-popup-signin.html',
     popup_post_logout_redirect_uri:'http://localhost:15000/user-manager-sample-popup-signout.html',

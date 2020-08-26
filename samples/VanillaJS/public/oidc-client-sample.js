@@ -25,6 +25,9 @@ var settings = {
     response_type: 'id_token token',
     scope: 'openid email roles',
 
+    grant_type: 'implicit',
+    //client_secret: 'aaa',
+
     filterProtocolClaims: true,
     loadUserInfo: true
 };

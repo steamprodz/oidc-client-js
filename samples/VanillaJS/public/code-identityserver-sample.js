@@ -21,6 +21,8 @@ document.getElementById('endSignoutMainWindow').addEventListener("click", endSig
 
 document.getElementById('popupSignout').addEventListener("click", popupSignout, false);
 
+document.getElementById('clientCredentialsAuth').addEventListener("click", clientCredentialsAuth, false);
+
 ///////////////////////////////
 // config
 ///////////////////////////////
@@ -34,12 +36,15 @@ var settings = {
     authority: 'https://demo.identityserver.io',
     client_id: 'interactive.public',
     //client_id: 'interactive.public.short',
+    //client_id: 'spa.short',
     redirect_uri: url + '/code-identityserver-sample.html',
     post_logout_redirect_uri: url + '/code-identityserver-sample.html',
     response_type: 'code',
     //response_mode: 'fragment',
-    scope: 'openid profile api',
-    //scope: 'openid profile api offline_access',
+    //scope: 'openid profile api',
+    scope: 'openid profile email api offline_access',
+
+    grant_type: 'client_credentials',
     
     popup_redirect_uri: url + '/code-identityserver-sample-popup-signin.html',
     popup_post_logout_redirect_uri: url + '/code-identityserver-sample-popup-signout.html',
@@ -208,3 +213,11 @@ function endSignoutMainWindow(){
         log(err);
     });
 };
+
+function clientCredentialsAuth() {
+    mgr.signinSilent({state:'some data', grant_type: 'client_credentials'}).then(function(user) {
+        log("signed in", user);
+    }).catch(function(err) {
+        log(err);
+    });
+}

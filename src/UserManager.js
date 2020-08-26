@@ -170,13 +170,56 @@ export class UserManager extends OidcClient {
             else {
                 args.request_type = "si:s";
                 args.id_token_hint = args.id_token_hint || (this.settings.includeIdTokenInSilentRenew && user && user.id_token);
-                if (user && this._settings.validateSubOnSilentRenew) {
+                if (user && args.grant_type !== 'client_credentials' && this._settings.validateSubOnSilentRenew) {
                     Log.debug("UserManager.signinSilent, subject prior to silent renew: ", user.profile.sub);
                     args.current_sub = user.profile.sub;
                 }
                 return this._signinSilentIframe(args);
             }
         });
+    }
+
+    // Returns User
+    signinClientCredentials(args = {}) {
+        args['grant_type'] = 'client_credentials';
+
+        return this.signinSilent(args);
+    }
+
+    // Returns query result
+    apiGet(apiPath, args = {}) {
+        return this.getUser().then((user) => {
+            if (user && user.access_token) {
+                return this._callApi(user.access_token, apiPath, args);
+            } else if (user) {
+                // Renew token
+                return signinClientCredentials(args).then((user) => {
+                    return this._callApi(user.access_token, apiPath, args);
+                });
+            } else {
+                throw new Error('user is not logged in');
+            }
+            });
+    }
+
+    _callApi(token, apiPath, args = {}) {
+        var jsonService = new Oidc.JsonService();
+    
+        return jsonService.getJson(settings.authority + "/" + apiPath, token)
+            .then((result) => {
+                Log.debug("api call result", result);
+                return result;
+            })
+            .catch((result) => {
+                if (result.status === 401) {
+                    // Renew token
+                    return this.signinClientCredentials(args).then(user => {
+                        return this._callApi(user.access_token);
+                    });
+                }
+                Log.error(result);
+                throw result;
+            });
     }
 
     _useRefreshToken(args = {}) {
@@ -387,6 +430,9 @@ export class UserManager extends OidcClient {
 
                 navigatorParams.url = signinRequest.url;
                 navigatorParams.id = signinRequest.state.id;
+
+                if (args['grant_type'] === 'client_credentials')
+                    return navigatorParams;
 
                 return handle.navigate(navigatorParams);
             }).catch(err => {

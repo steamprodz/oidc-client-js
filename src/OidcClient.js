@@ -40,6 +40,7 @@ export class OidcClient {
 
     createSigninRequest({
         response_type, scope, redirect_uri,
+        grant_type,
         // data was meant to be the place a caller could indicate the data to
         // have round tripped, but people were getting confused, so i added state (since that matches the spec)
         // and so now if data is not passed, but state is then state will be used
@@ -50,12 +51,18 @@ export class OidcClient {
         Log.debug("OidcClient.createSigninRequest");
 
         let client_id = this._settings.client_id;
-        response_type = response_type || this._settings.response_type;
+
+        // New
+        grant_type = grant_type || this._settings.grant_type;
+
+        const isClientCredentials = SigninRequest.isClientCredentials(grant_type);
+
+        response_type = isClientCredentials ? undefined : (response_type || this._settings.response_type);
         scope = scope || this._settings.scope;
-        redirect_uri = redirect_uri || this._settings.redirect_uri;
+        redirect_uri = !isClientCredentials ? undefined : (redirect_uri || this._settings.redirect_uri);
 
         // id_token_hint, login_hint aren't allowed on _settings
-        prompt = prompt || this._settings.prompt;
+        prompt = isClientCredentials ? undefined : (prompt || this._settings.prompt);
         display = display || this._settings.display;
         max_age = max_age || this._settings.max_age;
         ui_locales = ui_locales || this._settings.ui_locales;
@@ -71,6 +78,34 @@ export class OidcClient {
             return Promise.reject(new Error("OpenID Connect hybrid flow is not supported"));
         }
 
+        if (isClientCredentials) {
+            return this._metadataService.getTokenEndpoint().then(url => {
+                Log.debug("OidcClient.createSigninRequest: Received token endpoint", url);
+    
+                let signinRequest = new SigninRequest({
+                    url,
+                    client_id,
+                    redirect_uri,
+                    response_type,
+                    scope,
+                    data: data || state,
+                    authority,
+                    grant_type,
+                    prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values,
+                    resource, request, request_uri, extraQueryParams, extraTokenParams, request_type, response_mode,
+                    client_secret: this._settings.client_secret,
+                    skipUserInfo
+                });
+    
+                var signinState = signinRequest.state;
+                stateStore = stateStore || this._stateStore;
+    
+                return stateStore.set(signinState.id, signinState.toStorageString()).then(() => {
+                    return signinRequest;
+                });
+            });
+        }
+
         return this._metadataService.getAuthorizationEndpoint().then(url => {
             Log.debug("OidcClient.createSigninRequest: Received authorization endpoint", url);
 
@@ -82,6 +117,7 @@ export class OidcClient {
                 scope,
                 data: data || state,
                 authority,
+                grant_type,
                 prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values,
                 resource, request, request_uri, extraQueryParams, extraTokenParams, request_type, response_mode,
                 client_secret: this._settings.client_secret,
