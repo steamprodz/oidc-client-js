@@ -96,7 +96,7 @@ export class JsonService {
         });
     }
 
-    postForm(url, payload, basicAuth) {
+    postForm(url, payload, basicAuth, extraHeaders) {
         if (!url){
             Log.error("JsonService.postForm: No url passed");
             throw new Error("url");
@@ -201,6 +201,11 @@ export class JsonService {
             if (basicAuth !== undefined)
             {
                 req.setRequestHeader("Authorization", "Basic " + btoa(basicAuth));
+            }
+            
+            for(var key in extraHeaders) {
+                var value = extraHeaders[key];
+                req.setRequestHeader(key, value);
             }
 
             req.send(body);

@@ -20,6 +20,8 @@ document.getElementById('endSignoutMainWindow').addEventListener("click", endSig
 
 document.getElementById('popupSignout').addEventListener("click", popupSignout, false);
 
+document.getElementById('authService').addEventListener("click", authServiceTest, false);
+
 ///////////////////////////////
 // config
 ///////////////////////////////
@@ -47,6 +49,29 @@ var settings = {
     loadUserInfo: true
 };
 var mgr = new Oidc.UserManager(settings);
+
+var settingsMetaUI = {
+    authority: 'https://localhost:44344',
+    client_id: 'external_api',
+    scope: 'metaui_identity_admin_api',
+    client_secret: 'company',
+
+    grant_type: 'client_credentials',
+    
+    // popup_redirect_uri: url,
+    // popup_post_logout_redirect_uri: url,
+    
+    silent_redirect_uri: 'https://demo.identityserver.io',
+    // automaticSilentRenew:false,
+    // validateSubOnSilentRenew: true,
+    // //silentRequestTimeout:10000,
+
+    // monitorAnonymousSession : true,
+
+    // filterProtocolClaims: true,
+    // loadUserInfo: true,
+    // revokeAccessTokenOnSignout : true
+};
 
 ///////////////////////////////
 // events
@@ -168,3 +193,26 @@ function endSignoutMainWindow(){
         log(err);
     });
 };
+
+function authServiceTest() {
+    Oidc.IdentityAuthService.settings = settingsMetaUI;
+    var service = Oidc.IdentityAuthService.instance;
+
+    service.requestOrRenewToken()
+        .then((user) => {
+            log("user retrieved: ", user);
+
+            service.getUser()
+                .then((user) => {
+                    log("getUser retrieved: ", user);
+                })
+                .catch((err) => {
+                    log("exception when retrieving getUser: ", err);
+                });
+        })
+        .catch((err) => {
+            log("exception when retrieving user: ", err);
+        });
+
+    
+}

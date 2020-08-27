@@ -89,7 +89,7 @@ export interface MetadataServiceCtor {
 }
 
 export interface ResponseValidator {
-  validateSigninResponse(state: any, response: any): Promise<SigninResponse>;
+  validateSigninResponse(state: any, response: any, extraHeaders?: any): Promise<SigninResponse>;
   validateSignoutResponse(state: any, response: any): Promise<SignoutResponse>;
 }
 
@@ -113,7 +113,7 @@ export class OidcClient {
   readonly settings: OidcClientSettings;
 
   createSigninRequest(args?: any): Promise<SigninRequest>;
-  processSigninResponse(url?: string, stateStore?: StateStore): Promise<SigninResponse>;
+  processSigninResponse(url?: string, stateStore?: StateStore, extraHeaders?: any): Promise<SigninResponse>;
 
   createSignoutRequest(args?: any): Promise<SignoutRequest>;
   processSignoutResponse(url?: string, stateStore?: StateStore): Promise<SignoutResponse>;
@@ -134,6 +134,8 @@ export interface OidcClientSettings {
   /** Your client application's identifier as registered with the OIDC/OAuth2 */
   client_id?: string;
   client_secret?: string;
+  /** Grant type for OIDC/OAuth2, currently only 'client_credentials' and 'implicit' are supported (default: 'implicit') */
+  grant_type?: string;
   /** The type of response desired from the OIDC/OAuth2 provider (default: 'id_token') */
   readonly response_type?: string;
   readonly response_mode?: string;
@@ -188,7 +190,7 @@ export class UserManager extends OidcClient {
   signinPopupCallback(url?: string): Promise<User | undefined>;
 
   /** Trigger a silent request (via an iframe or refreshtoken if available) to the authorization endpoint */
-  signinSilent(args?: any): Promise<User>;
+  signinSilent(args?: any, extraHeaders?: any): Promise<User>;
   /** Notify the parent window of response from the authorization endpoint */
   signinSilentCallback(url?: string): Promise<User | undefined>;
 
@@ -215,7 +217,7 @@ export class UserManager extends OidcClient {
   signoutCallback(url?: string, keepWindowOpen?: boolean): Promise<SignoutResponse | undefined>;
 
   /** Query OP for user's current signin status */
-  querySessionStatus(args?: any): Promise<SessionStatus>;
+  querySessionStatus(args?: any, extraHeaders?: any): Promise<SessionStatus>;
 
   revokeAccessToken(): Promise<void>;
 
@@ -225,7 +227,7 @@ export class UserManager extends OidcClient {
   stopSilentRenew(): void;
 
   /** Trigger a client credentials auth request (via silent login: an iframe or refreshtoken if available) to the authorization endpoint */
-  signinClientCredentials(args?: any): Promise<User>;
+  signinClientCredentials(args?: any, extraHeaders?: any): Promise<User>;
 
   /** Calls REST API via specified path */
   apiGet(apiPath: string, args?: any): Promise<string>;
@@ -585,13 +587,43 @@ export class SessionMonitor {
 }
 
 export class JsonService {
-    constructor(
-    additionalContentTypes = null, 
-    XMLHttpRequestCtor = XMLHttpRequest, 
-    jwtHandler = null
-  )
+  constructor(additionalContentTypes?: any, XMLHttpRequestCtor?: XMLHttpRequest, jwtHandler?: Promise<any>);
   
   getJson(url, token) : Promise<string>;
 
-  postForm(url, payload) : Promise<string>;
-  }
+  postForm(url, payload, extraHeaders?) : Promise<string>;
+}
+
+/** Service for easy Identity access */
+export class AuthService {
+  /** Connection settings */
+  constructor(settings: any, extraHeaders?: any);
+
+  /** 
+   * Requests new token if the old one is missing or expired; uses valid token if exists. 
+   * @returns Current user or null.
+  */
+  requestOrRenewToken(state?: string) : Promise<User>;
+
+  /**
+   * Get current user.
+   * @returns Current user or null.
+   */
+  getUser() : Promise<User>;
+}
+
+/**
+ * Simplified facade for Identity easy access.
+ * Can have one instance.
+ * Settings should be set before using.
+ */
+export class IdentityAuthService {
+  /** Connection settings: set before calling instance property */
+  static settings : any;
+
+  /** Dictionary of headerName:value key-pairs to pass as request headers */
+  static extraHeaders : any;
+
+  /** Instance of AuthService */
+  static instance : AuthService;
+}

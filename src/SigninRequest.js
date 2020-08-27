@@ -59,7 +59,10 @@ export class SigninRequest {
         // Custom
         url = UrlUtility.addQueryParam(url, "grant_type", grant_type);
 
-        url = UrlUtility.addQueryParam(url, "response_type", response_type);
+        if (response_type) {
+            url = UrlUtility.addQueryParam(url, "response_type", response_type);
+        }
+
         url = UrlUtility.addQueryParam(url, "scope", scope);
 
         url = UrlUtility.addQueryParam(url, "state", this.state.id);

@@ -29,12 +29,12 @@ export class ResponseValidator {
         this._tokenClient = new TokenClientCtor(this._settings);
     }
 
-    validateSigninResponse(state, response) {
+    validateSigninResponse(state, response, extraHeaders = {}) {
         Log.debug("ResponseValidator.validateSigninResponse");
 
         return this._processSigninParams(state, response).then(response => {
             Log.debug("ResponseValidator.validateSigninResponse: state processed");
-            return this._validateTokens(state, response).then(response => {
+            return this._validateTokens(state, response, extraHeaders).then(response => {
                 Log.debug("ResponseValidator.validateSigninResponse: tokens validated");
                 return this._processClaims(state, response).then(response => {
                     Log.debug("ResponseValidator.validateSigninResponse: claims processed");
@@ -229,7 +229,7 @@ export class ResponseValidator {
         return result;
     }
 
-    _validateTokens(state, response) {
+    _validateTokens(state, response, extraHeaders = {}) {
         if (response.code) {
             Log.debug("ResponseValidator._validateTokens: Validating code");
             return this._processCode(state, response);
@@ -237,7 +237,7 @@ export class ResponseValidator {
 
         if (response.grant_type === 'client_credentials') {
             Log.debug("ResponseValidator._validateTokens: Validating client credentials");
-            return this._processClientCredentials(state, response);
+            return this._processClientCredentials(state, response, extraHeaders);
         }
 
         if (response.id_token) {
@@ -285,7 +285,7 @@ export class ResponseValidator {
         });
     }
 
-    _processClientCredentials(state, response) {
+    _processClientCredentials(state, response, extraHeaders) {
         var request = {
             client_id: state.client_id,
             client_secret: state.client_secret
@@ -295,7 +295,7 @@ export class ResponseValidator {
             Object.assign(request, state.extraTokenParams);
         }
         
-        return this._tokenClient.exchangeClientCredentialsToken(request).then(tokenResponse => {
+        return this._tokenClient.exchangeClientCredentialsToken(request, extraHeaders).then(tokenResponse => {
             
             for(var key in tokenResponse) {
                 response[key] = tokenResponse[key];
