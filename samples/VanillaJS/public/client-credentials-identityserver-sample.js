@@ -213,7 +213,7 @@ function endSignoutMainWindow(){
 };
 
 function clientCredentialsAuth() {
-    mgr.signinSilent({state:'some data', grant_type: 'client_credentials'}).then(function(user) {
+    mgr.signinClientCredentials().then(function(user) {
         log("signed in", user);
     }).catch(function(err) {
         log(err);
@@ -221,41 +221,9 @@ function clientCredentialsAuth() {
 }
 
 function testApi() {
-    return mgr.getUser().then((user) => {
-        if (user && user.access_token) {
-            return _callApi(user.access_token);
-        } else if (user) {
-            // Renew token
-            return mgr.signinSilent({state:'some data', grant_type: 'client_credentials'}).then((user) => {
-                return this._callApi(user.access_token);
-            });
-        } else {
-            throw new Error('user is not logged in');
-        }
-        });
-
-    // mgr.signinSilent({state:'some data', grant_type: 'client_credentials'}).then(function(user) {
-    //     log("signed in", user);
-    // }).catch(function(err) {
-    //     log(err);
-    // });
-}
-
-function _callApi(token) {
-    var jsonService = new Oidc.JsonService();
-
-    return jsonService.getJson(settings.authority + "/api/test", token)
-        .then((result) => {
-            log("api call result", result);
-        })
-        .catch((result) => {
-            if (result.status === 401) {
-                // Renew token
-                return mgr.signinSilent({state:'some data', grant_type: 'client_credentials'}).then(user => {
-                    return _callApi(user.access_token);
-                });
-            }
-            log(result);
-            throw result;
-        });
+    mgr.apiGet('api/test').then((result) => {
+        log("api call result", result);
+    }).catch((err) => {
+        log(err);
+    });
 }

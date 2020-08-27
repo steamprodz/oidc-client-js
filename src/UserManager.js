@@ -178,6 +178,49 @@ export class UserManager extends OidcClient {
         });
     }
 
+    // Returns User
+    signinClientCredentials(args = {}) {
+        args['grant_type'] = 'client_credentials';
+
+        return this.signinSilent(args);
+    }
+
+    // Returns query result
+    apiGet(apiPath, args = {}) {
+        return this.getUser().then((user) => {
+            if (user && user.access_token) {
+                return this._callApi(user.access_token, apiPath, args);
+            } else if (user) {
+                // Renew token
+                return signinClientCredentials(args).then((user) => {
+                    return this._callApi(user.access_token, apiPath, args);
+                });
+            } else {
+                throw new Error('user is not logged in');
+            }
+            });
+    }
+
+    _callApi(token, apiPath, args = {}) {
+        var jsonService = new Oidc.JsonService();
+    
+        return jsonService.getJson(settings.authority + "/" + apiPath, token)
+            .then((result) => {
+                Log.debug("api call result", result);
+                return result;
+            })
+            .catch((result) => {
+                if (result.status === 401) {
+                    // Renew token
+                    return this.signinClientCredentials(args).then(user => {
+                        return this._callApi(user.access_token);
+                    });
+                }
+                Log.error(result);
+                throw result;
+            });
+    }
+
     _useRefreshToken(args = {}) {
         return this._tokenClient.exchangeRefreshToken(args).then(result => {
             if (!result) {
