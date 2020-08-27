@@ -27,7 +27,7 @@ export class SigninRequest {
             Log.error("SigninRequest.ctor: No redirect_uri passed");
             throw new Error("redirect_uri");
         }
-        if (!response_type) {
+        if (!response_type && grant_type !== 'client_credentials') {
             Log.error("SigninRequest.ctor: No response_type passed");
             throw new Error("response_type");
         }
@@ -86,6 +86,9 @@ export class SigninRequest {
     }
 
     static isOidc(response_type) {
+        if (!response_type)
+            return false;
+
         var result = response_type.split(/\s+/g).filter(function(item) {
             return item === "id_token";
         });
@@ -93,6 +96,9 @@ export class SigninRequest {
     }
 
     static isOAuth(response_type) {
+        if (!response_type)
+            return false;
+
         var result = response_type.split(/\s+/g).filter(function(item) {
             return item === "token";
         });
@@ -100,8 +106,21 @@ export class SigninRequest {
     }
     
     static isCode(response_type) {
+        if (!response_type)
+            return false;
+
         var result = response_type.split(/\s+/g).filter(function(item) {
             return item === "code";
+        });
+        return !!(result[0]);
+    }
+
+    static isClientCredentials(grant_type) {
+        if (!grant_type)
+            return false;
+
+        var result = grant_type.split(/\s+/g).filter(function(item) {
+            return item === "client_credentials";
         });
         return !!(result[0]);
     }

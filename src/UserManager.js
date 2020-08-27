@@ -169,7 +169,7 @@ export class UserManager extends OidcClient {
             }
             else {
                 args.id_token_hint = args.id_token_hint || (this.settings.includeIdTokenInSilentRenew && user && user.id_token);
-                if (user && this._settings.validateSubOnSilentRenew) {
+                if (user && args.grant_type !== 'client_credentials' && this._settings.validateSubOnSilentRenew) {
                     Log.debug("UserManager.signinSilent, subject prior to silent renew: ", user.profile.sub);
                     args.current_sub = user.profile.sub;
                 }
