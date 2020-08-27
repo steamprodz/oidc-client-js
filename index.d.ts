@@ -132,6 +132,8 @@ export interface OidcClientSettings {
   /** Your client application's identifier as registered with the OIDC/OAuth2 */
   client_id?: string;
   client_secret?: string;
+  /** Grant type for OIDC/OAuth2, currently only 'client_credentials' and 'implicit' are supported (default: 'implicit') */
+  grant_type?: string;
   /** The type of response desired from the OIDC/OAuth2 provider (default: 'id_token') */
   readonly response_type?: string;
   readonly response_mode?: string;
