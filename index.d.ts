@@ -571,7 +571,7 @@ export class SessionMonitor {
 }
 
 export class JsonService {
-  constructor(additionalContentTypes?: any, XMLHttpRequestCtor: XMLHttpRequest, jwtHandler?: Promise<any>);
+  constructor(additionalContentTypes?: any, XMLHttpRequestCtor?: XMLHttpRequest, jwtHandler?: Promise<any>);
   
   getJson(url, token) : Promise<string>;
 
