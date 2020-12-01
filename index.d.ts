@@ -576,4 +576,16 @@ export class JsonService {
   getJson(url, token) : Promise<string>;
 
   postForm(url, payload) : Promise<string>;
-  }
+}
+
+export class AuthService {
+  constructor(settings: any);
+
+  async requestOrRenewToken(state?: string) : Promise<User>;
+
+  async getUser() : Promise<User>;
+}
+
+export class AuthServiceInstance {
+  static get instance() : AuthServiceInstance;
+}

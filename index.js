@@ -17,6 +17,7 @@ import { SessionMonitor } from './src/SessionMonitor.js';
 import { Global } from './src/Global.js';
 import { User } from './src/User.js';
 import { JsonService } from './src/JsonService.js';
+import { AuthService, IdentityAuthService } from './AuthService.js';
 
 import { Version } from './version.js';
 
@@ -37,5 +38,7 @@ export default {
     SessionMonitor,
     Global,
     User,
-    JsonService
+    JsonService,
+    AuthService,
+    IdentityAuthService
 };

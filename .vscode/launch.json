@@ -5,11 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "npm start",
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
             "url": "http://localhost:15000",
             "webRoot": "${workspaceFolder}",
+            "breakOnLoad": true,
             "sourceMaps": true
         }
     ]
