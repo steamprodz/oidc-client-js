@@ -578,17 +578,33 @@ export class JsonService {
   postForm(url, payload) : Promise<string>;
 }
 
+/** Service for easy Identity access */
 export class AuthService {
+  /** Connection settings */
   constructor(settings: any);
 
-  async requestOrRenewToken(state?: string) : Promise<User>;
+  /** 
+   * Requests new token if the old one is missing or expired; uses valid token if exists. 
+   * @returns Current user or null.
+  */
+  requestOrRenewToken(state?: string) : Promise<User>;
 
-  async getUser() : Promise<User>;
+  /**
+   * Get current user.
+   * @returns Current user or null.
+   */
+  getUser() : Promise<User>;
 }
+
+/**
+ * Simplified facade for Identity easy access.
+ * Can have one instance.
+ * Settings should be set before using.
+ */
 export class IdentityAuthService {
-  static get settings() : any;
+  /** Connection settings: set before calling instance property */
+  static settings : any;
 
-  static set settings(settings: any) : any;
-
-  static get instance() : AuthService;
+  /** Instance of AuthService */
+  static instance : AuthService;
 }
