@@ -586,6 +586,10 @@ export class AuthService {
   async getUser() : Promise<User>;
 }
 
-export class AuthServiceInstance {
-  static get instance() : AuthServiceInstance;
+export class IdentityAuthService {
+  static get settings() : any;
+
+  static set settings(settings: any) : any;
+
+  static get instance() : IdentityAuthService;
 }

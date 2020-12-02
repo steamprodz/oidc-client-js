@@ -22,12 +22,12 @@ export class AuthService {
 }
 
 export class IdentityAuthService {
-    static set settings(settings) {
-        this._settings = settings;
-    }
-
     static get settings() {
         return this._settings;
+    }
+
+    static set settings(settings) {
+        this._settings = settings;
     }
 
     static get instance() {
