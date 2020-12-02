@@ -32,7 +32,7 @@ export class IdentityAuthService {
 
     static get instance() {
         if (!this.authService) {
-            this.authService = new AuthService(this.settings);
+            this.authService = new AuthService(this._settings);
         }
 
         return this.authService;

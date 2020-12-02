@@ -590,5 +590,5 @@ export class IdentityAuthService {
 
   static set settings(settings: any) : any;
 
-  static get instance() : IdentityAuthService;
+  static get instance() : AuthService;
 }
