@@ -87,7 +87,7 @@ export interface MetadataServiceCtor {
 }
 
 export interface ResponseValidator {
-  validateSigninResponse(state: any, response: any, extraHeaders?: {}): Promise<SigninResponse>;
+  validateSigninResponse(state: any, response: any, extraHeaders?: any): Promise<SigninResponse>;
   validateSignoutResponse(state: any, response: any): Promise<SignoutResponse>;
 }
 
@@ -111,7 +111,7 @@ export class OidcClient {
   readonly settings: OidcClientSettings;
 
   createSigninRequest(args?: any): Promise<SigninRequest>;
-  processSigninResponse(url?: string, stateStore?: StateStore, extraHeaders?: {}): Promise<SigninResponse>;
+  processSigninResponse(url?: string, stateStore?: StateStore, extraHeaders?: any): Promise<SigninResponse>;
 
   createSignoutRequest(args?: any): Promise<SignoutRequest>;
   processSignoutResponse(url?: string, stateStore?: StateStore): Promise<SignoutResponse>;
@@ -186,7 +186,7 @@ export class UserManager extends OidcClient {
   signinPopupCallback(url?: string): Promise<User | undefined>;
 
   /** Trigger a silent request (via an iframe or refreshtoken if available) to the authorization endpoint */
-  signinSilent(args?: any): Promise<User>;
+  signinSilent(args?: any, extraHeaders?: any): Promise<User>;
   /** Notify the parent window of response from the authorization endpoint */
   signinSilentCallback(url?: string): Promise<User | undefined>;
 
@@ -213,7 +213,7 @@ export class UserManager extends OidcClient {
   signoutCallback(url?: string): Promise<SignoutResponse | void>;
 
   /** Query OP for user's current signin status */
-  querySessionStatus(args?: any): Promise<SessionStatus>;
+  querySessionStatus(args?: any, extraHeaders?: any): Promise<SessionStatus>;
 
   revokeAccessToken(): Promise<void>;
 
@@ -223,7 +223,7 @@ export class UserManager extends OidcClient {
   stopSilentRenew(): void;
 
   /** Trigger a client credentials auth request (via silent login: an iframe or refreshtoken if available) to the authorization endpoint */
-  signinClientCredentials(args?: any): Promise<User>;
+  signinClientCredentials(args?: any, extraHeaders?: any): Promise<User>;
 
   /** Calls REST API via specified path */
   apiGet(apiPath: string, args?: any): Promise<string>;
@@ -581,7 +581,7 @@ export class JsonService {
 /** Service for easy Identity access */
 export class AuthService {
   /** Connection settings */
-  constructor(settings: any);
+  constructor(settings: any, extraHeaders?: any);
 
   /** 
    * Requests new token if the old one is missing or expired; uses valid token if exists. 
@@ -604,6 +604,9 @@ export class AuthService {
 export class IdentityAuthService {
   /** Connection settings: set before calling instance property */
   static settings : any;
+
+  /** Dictionary of headerName:value key-pairs to pass as request headers */
+  static extraHeaders : any;
 
   /** Instance of AuthService */
   static instance : AuthService;

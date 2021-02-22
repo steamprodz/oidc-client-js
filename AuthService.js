@@ -1,13 +1,14 @@
 import { UserManager } from '.';
 
 export class AuthService {
-    constructor(settings) {
+    constructor(settings, extraHeaders = {}) {
         this.settings = settings;
+        this.extraHeaders = extraHeaders;
         this.userManager = new UserManager(settings);
     }
 
     async requestOrRenewToken(state) {
-        return this.userManager.signinClientCredentials({state});
+        return this.userManager.signinClientCredentials({state}, this.extraHeaders);
     }
 
     async getUser() {
@@ -30,9 +31,17 @@ export class IdentityAuthService {
         this._settings = settings;
     }
 
+    static get extraHeaders() {
+        return this._extraHeaders;
+    }
+
+    static set extraHeaders(extraHeaders) {
+        this._extraHeaders = extraHeaders;
+    }
+
     static get instance() {
         if (!this.authService) {
-            this.authService = new AuthService(this._settings);
+            this.authService = new AuthService(this._settings, this._extraHeaders);
         }
 
         return this.authService;
