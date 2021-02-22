@@ -96,7 +96,7 @@ export class JsonService {
         });
     }
 
-    postForm(url, payload) {
+    postForm(url, payload, extraHeaders = null) {
         if (!url){
             Log.error("JsonService.postForm: No url passed");
             throw new Error("url");
@@ -197,6 +197,11 @@ export class JsonService {
             }
 
             req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            for(var key in extraHeaders) {
+                var value = extraHeaders[key];
+                req.setRequestHeader(key, value);
+            }
+
             req.send(body);
         });
     }

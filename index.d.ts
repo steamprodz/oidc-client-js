@@ -87,7 +87,7 @@ export interface MetadataServiceCtor {
 }
 
 export interface ResponseValidator {
-  validateSigninResponse(state: any, response: any): Promise<SigninResponse>;
+  validateSigninResponse(state: any, response: any, extraHeaders?: {}): Promise<SigninResponse>;
   validateSignoutResponse(state: any, response: any): Promise<SignoutResponse>;
 }
 
@@ -111,7 +111,7 @@ export class OidcClient {
   readonly settings: OidcClientSettings;
 
   createSigninRequest(args?: any): Promise<SigninRequest>;
-  processSigninResponse(url?: string, stateStore?: StateStore): Promise<SigninResponse>;
+  processSigninResponse(url?: string, stateStore?: StateStore, extraHeaders?: {}): Promise<SigninResponse>;
 
   createSignoutRequest(args?: any): Promise<SignoutRequest>;
   processSignoutResponse(url?: string, stateStore?: StateStore): Promise<SignoutResponse>;
@@ -575,7 +575,7 @@ export class JsonService {
   
   getJson(url, token) : Promise<string>;
 
-  postForm(url, payload) : Promise<string>;
+  postForm(url, payload, extraHeaders?) : Promise<string>;
 }
 
 /** Service for easy Identity access */

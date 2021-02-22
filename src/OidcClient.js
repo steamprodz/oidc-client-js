@@ -162,12 +162,12 @@ export class OidcClient {
         });
     }
 
-    processSigninResponse(url, stateStore) {
+    processSigninResponse(url, stateStore, extraHeaders = {}) {
         Log.debug("OidcClient.processSigninResponse");
 
         return this.readSigninResponseState(url, stateStore, true).then(({state, response}) => {
             Log.debug("OidcClient.processSigninResponse: Received state from storage; validating response");
-            return this._validator.validateSigninResponse(state, response);
+            return this._validator.validateSigninResponse(state, response, extraHeaders);
         });
     }
 
