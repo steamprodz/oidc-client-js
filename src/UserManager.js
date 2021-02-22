@@ -157,7 +157,7 @@ export class UserManager extends OidcClient {
         });
     }
 
-    signinSilent(args = {}) {
+    signinSilent(args = {}, extraHeaders = {}) {
         args = Object.assign({}, args);
 
         args.request_type = "si:s";
@@ -173,16 +173,16 @@ export class UserManager extends OidcClient {
                     Log.debug("UserManager.signinSilent, subject prior to silent renew: ", user.profile.sub);
                     args.current_sub = user.profile.sub;
                 }
-                return this._signinSilentIframe(args);
+                return this._signinSilentIframe(args, extraHeaders);
             }
         });
     }
 
     // Returns User
-    signinClientCredentials(args = {}) {
+    signinClientCredentials(args = {}, extraHeaders = {}) {
         args['grant_type'] = 'client_credentials';
 
-        return this.signinSilent(args);
+        return this.signinSilent(args, extraHeaders);
     }
 
     // Returns query result
@@ -286,7 +286,7 @@ export class UserManager extends OidcClient {
         });
     }
     
-    _signinSilentIframe(args = {}) {
+    _signinSilentIframe(args = {}, extraHeaders = {}) {
         let url = args.redirect_uri || this.settings.silent_redirect_uri || this.settings.redirect_uri;
         if (!url) {
             Log.error("UserManager.signinSilent: No silent_redirect_uri configured");
@@ -358,7 +358,7 @@ export class UserManager extends OidcClient {
         });
     }
 
-    querySessionStatus(args = {}) {
+    querySessionStatus(args = {}, extraHeaders = {}) {
         args = Object.assign({}, args);
 
         args.request_type = "si:s"; // this acts like a signin silent
@@ -378,7 +378,7 @@ export class UserManager extends OidcClient {
             startUrl: url,
             silentRequestTimeout: args.silentRequestTimeout || this.settings.silentRequestTimeout
         }).then(navResponse => {
-            return this.processSigninResponse(navResponse.url).then(signinResponse => {
+            return this.processSigninResponse(navResponse.url, extraHeaders).then(signinResponse => {
                 Log.debug("UserManager.querySessionStatus: got signin response");
 
                 if (signinResponse.session_state && signinResponse.profile.sub) {
@@ -441,8 +441,8 @@ export class UserManager extends OidcClient {
             });
         });
     }
-    _signinEnd(url, args = {}) {
-        return this.processSigninResponse(url).then(signinResponse => {
+    _signinEnd(url, args = {}, extraHeaders = {}) {
+        return this.processSigninResponse(url, extraHeaders).then(signinResponse => {
             Log.debug("UserManager._signinEnd: got signin response");
 
             let user = new User(signinResponse);
