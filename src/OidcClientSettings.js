@@ -63,6 +63,9 @@ export class OidcClientSettings {
         // New
         this._grant_type = grant_type;
 
+        // New
+        this._grant_type = grant_type;
+
         this._prompt = prompt;
         this._display = display;
         this._max_age = max_age;
