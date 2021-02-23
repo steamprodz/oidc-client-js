@@ -105,7 +105,7 @@ export class TokenClient {
         });
     }
 
-    exchangeClientCredentialsToken(args = {}, extraHeaders = {}) {
+    exchangeClientCredentialsToken(args = {}, extraHeaders) {
         args = Object.assign({}, args);
 
         args.grant_type = args.grant_type || "client_credentials";
@@ -120,7 +120,7 @@ export class TokenClient {
         return this._metadataService.getTokenEndpoint(false).then(url => {
             Log.debug("TokenClient.exchangeCredentialsToken: Received token endpoint");
 
-            return this._jsonService.postForm(url, args, extraHeaders).then(response => {
+            return this._jsonService.postForm(url, args, null, extraHeaders).then(response => {
                 Log.debug("TokenClient.exchangeCredentialsToken: response received");
                 return response;
             });

@@ -29,7 +29,7 @@ export class ResponseValidator {
         this._tokenClient = new TokenClientCtor(this._settings);
     }
 
-    validateSigninResponse(state, response, extraHeaders = {}) {
+    validateSigninResponse(state, response, extraHeaders) {
         Log.debug("ResponseValidator.validateSigninResponse");
 
         return this._processSigninParams(state, response).then(response => {
@@ -229,7 +229,7 @@ export class ResponseValidator {
         return result;
     }
 
-    _validateTokens(state, response, extraHeaders = {}) {
+    _validateTokens(state, response, extraHeaders) {
         if (response.code) {
             Log.debug("ResponseValidator._validateTokens: Validating code");
             return this._processCode(state, response);

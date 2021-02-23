@@ -235,6 +235,15 @@ export class UserManager extends OidcClient {
   events: UserManagerEvents;
 }
 
+export class UserInfoService {
+  constructor(
+    settings: OidcClientSettings,
+    JsonServiceCtor?: any,
+    MetadataServiceCtor?: MetadataServiceCtor
+  );
+  getClaims(token: any): Promise<any>;
+}
+
 export interface SessionStatus {
   /** Opaque session state used to validate if session changed (monitorSession) */
   session_state: string;
@@ -584,14 +593,6 @@ export interface CheckSessionIFrameCtor {
 
 export class SessionMonitor {
   constructor(userManager: UserManager, CheckSessionIFrameCtor: CheckSessionIFrameCtor);
-}
-
-export class JsonService {
-  constructor(additionalContentTypes?: any, XMLHttpRequestCtor?: XMLHttpRequest, jwtHandler?: Promise<any>);
-  
-  getJson(url, token) : Promise<string>;
-
-  postForm(url, payload, extraHeaders?) : Promise<string>;
 }
 
 /** Service for easy Identity access */

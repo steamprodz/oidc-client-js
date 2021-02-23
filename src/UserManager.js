@@ -158,7 +158,7 @@ export class UserManager extends OidcClient {
         });
     }
 
-    signinSilent(args = {}, extraHeaders = {}) {
+    signinSilent(args = {}, extraHeaders) {
         args = Object.assign({}, args);
 
         // first determine if we have a refresh token, or need to use iframe
@@ -180,7 +180,7 @@ export class UserManager extends OidcClient {
     }
 
     // Returns User
-    signinClientCredentials(args = {}, extraHeaders = {}) {
+    signinClientCredentials(args = {}, extraHeaders) {
         args['grant_type'] = 'client_credentials';
 
         return this.signinSilent(args, extraHeaders);
@@ -289,7 +289,7 @@ export class UserManager extends OidcClient {
         });
     }
     
-    _signinSilentIframe(args = {}, extraHeaders = {}) {
+    _signinSilentIframe(args = {}, extraHeaders) {
         let url = args.redirect_uri || this.settings.silent_redirect_uri || this.settings.redirect_uri;
         if (!url) {
             Log.error("UserManager.signinSilent: No silent_redirect_uri configured");
@@ -361,7 +361,7 @@ export class UserManager extends OidcClient {
         });
     }
 
-    querySessionStatus(args = {}, extraHeaders = {}) {
+    querySessionStatus(args = {}, extraHeaders) {
         args = Object.assign({}, args);
 
         args.request_type = "si:s"; // this acts like a signin silent
@@ -444,7 +444,7 @@ export class UserManager extends OidcClient {
             });
         });
     }
-    _signinEnd(url, args = {}, extraHeaders = {}) {
+    _signinEnd(url, args = {}, extraHeaders) {
         return this.processSigninResponse(url, extraHeaders).then(signinResponse => {
             Log.debug("UserManager._signinEnd: got signin response");
 

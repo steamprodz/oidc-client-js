@@ -1,7 +1,7 @@
 import { UserManager } from '.';
 
 export class AuthService {
-    constructor(settings, extraHeaders = {}) {
+    constructor(settings, extraHeaders) {
         this.settings = settings;
         this.extraHeaders = extraHeaders;
         this.userManager = new UserManager(settings);

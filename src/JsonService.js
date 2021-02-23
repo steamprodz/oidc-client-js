@@ -202,10 +202,13 @@ export class JsonService {
             {
                 req.setRequestHeader("Authorization", "Basic " + btoa(basicAuth));
             }
-            
-            for(var key in extraHeaders) {
-                var value = extraHeaders[key];
-                req.setRequestHeader(key, value);
+
+            if (extraHeaders !== undefined)
+            {
+                for(var key in extraHeaders) {
+                    var value = extraHeaders[key];
+                    req.setRequestHeader(key, value);
+                }
             }
 
             req.send(body);

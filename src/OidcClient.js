@@ -162,7 +162,7 @@ export class OidcClient {
         });
     }
 
-    processSigninResponse(url, stateStore, extraHeaders = {}) {
+    processSigninResponse(url, stateStore, extraHeaders) {
         Log.debug("OidcClient.processSigninResponse");
 
         return this.readSigninResponseState(url, stateStore, true).then(({state, response}) => {
