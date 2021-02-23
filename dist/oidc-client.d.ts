@@ -595,17 +595,6 @@ export class SessionMonitor {
   constructor(userManager: UserManager, CheckSessionIFrameCtor: CheckSessionIFrameCtor);
 }
 
-<<<<<<< HEAD
-=======
-export class JsonService {
-  constructor(additionalContentTypes?: any, XMLHttpRequestCtor?: XMLHttpRequest, jwtHandler?: Promise<any>);
-  
-  getJson(url, token) : Promise<string>;
-
-  postForm(url, payload, extraHeaders?) : Promise<string>;
-}
-
->>>>>>> 70f8348eefca0e2f5e27c2431d87911a5c7b7feb
 /** Service for easy Identity access */
 export class AuthService {
   /** Connection settings */
