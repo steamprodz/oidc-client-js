@@ -1,4 +1,4 @@
-import { UserManager } from '.';
+import { UserManager } from "."
 
 export class AuthService {
     constructor(settings, extraHeaders) {
@@ -7,11 +7,11 @@ export class AuthService {
         this.userManager = new UserManager(settings);
     }
 
-    async requestOrRenewToken(state) {
+    requestOrRenewToken(state) {
         return this.userManager.signinClientCredentials({state}, this.extraHeaders);
     }
 
-    async getUser() {
+    getUser() {
         return this.userManager.getUser().then((user) => {
             if (!user) {
               return Promise.reject('User is not authenticated');

@@ -52,9 +52,9 @@ var mgr = new Oidc.UserManager(settings);
 
 var settingsMetaUI = {
     authority: 'https://localhost:44344',
-    client_id: 'external_api',
+    client_id: 'client_e30e20cd-f2c4-4c71-aa96-dce8812b9086',
     scope: 'metaui_identity_admin_api',
-    client_secret: 'company',
+    client_secret: 'e30e20cd-f2c4-4c71-aa96-dce8812b9086::45aa699e-135b-4151-8e0f-82f7648410b5',
 
     grant_type: 'client_credentials',
     
@@ -196,22 +196,27 @@ function endSignoutMainWindow(){
 
 function authServiceTest() {
     Oidc.IdentityAuthService.settings = settingsMetaUI;
+    Oidc.IdentityAuthService.extraHeaders = { "NavUserId": "USERID-0000-0000" };
     var service = Oidc.IdentityAuthService.instance;
 
     service.requestOrRenewToken()
         .then((user) => {
             log("user retrieved: ", user);
+            console.log(user);
 
             service.getUser()
                 .then((user) => {
                     log("getUser retrieved: ", user);
+                    console.log(user);
                 })
                 .catch((err) => {
                     log("exception when retrieving getUser: ", err);
+                    console.log(err);
                 });
         })
         .catch((err) => {
             log("exception when retrieving user: ", err);
+            console.log(err);
         });
 
     

@@ -111,16 +111,19 @@ export class TokenClient {
         args.grant_type = args.grant_type || "client_credentials";
         args.client_id = args.client_id || this._settings.client_id;
         args.client_secret = args.client_secret || this._settings.client_secret;
+        args.scope = args.scope || this._settings.scope;
 
         if (!args.client_id) {
             Log.error("TokenClient.exchangeClientCredentialsToken: No client_id passed");
             return Promise.reject(new Error("A client_id is required"));
         }
 
+        var basicAuth = args.client_id + ":" + args.client_secret;
+
         return this._metadataService.getTokenEndpoint(false).then(url => {
             Log.debug("TokenClient.exchangeCredentialsToken: Received token endpoint");
 
-            return this._jsonService.postForm(url, args, null, extraHeaders).then(response => {
+            return this._jsonService.postForm(url, args, basicAuth, extraHeaders).then(response => {
                 Log.debug("TokenClient.exchangeCredentialsToken: response received");
                 return response;
             });

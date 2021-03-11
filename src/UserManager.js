@@ -302,7 +302,8 @@ export class UserManager extends OidcClient {
         return this._signin(args, this._iframeNavigator, {
             startUrl: url,
             silentRequestTimeout: args.silentRequestTimeout || this.settings.silentRequestTimeout
-        }).then(user => {
+        },
+        extraHeaders).then(user => {
             if (user) {
                 if (user.profile && user.profile.sub) {
                     Log.info("UserManager.signinSilent: successful, signed in sub: ", user.profile.sub);
@@ -415,9 +416,9 @@ export class UserManager extends OidcClient {
         });
     }
 
-    _signin(args, navigator, navigatorParams = {}) {
+    _signin(args, navigator, navigatorParams = {}, extraHeaders = null) {
         return this._signinStart(args, navigator, navigatorParams).then(navResponse => {
-            return this._signinEnd(navResponse.url, args);
+            return this._signinEnd(navResponse.url, args, extraHeaders);
         });
     }
     _signinStart(args, navigator, navigatorParams = {}) {
@@ -444,8 +445,8 @@ export class UserManager extends OidcClient {
             });
         });
     }
-    _signinEnd(url, args = {}, extraHeaders) {
-        return this.processSigninResponse(url, extraHeaders).then(signinResponse => {
+    _signinEnd(url, args = {}, extraHeaders = null) {
+        return this.processSigninResponse(url, null, extraHeaders).then(signinResponse => {
             Log.debug("UserManager._signinEnd: got signin response");
 
             let user = new User(signinResponse);
